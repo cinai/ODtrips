@@ -1,0 +1,108 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Leaflet</title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static "dist/leaflet.awesome-markers.css" %}">
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" ></script>
+
+  </head>
+  <body>
+    <div class="row"><p></p></div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="col-md-5">
+          <div class="input-group">
+              <input  id ="paraderoName" type="text" class="form-control" placeholder="Buscar paradero...">
+              <span class="input-group-btn">
+              <button class="btn btn-default" id="buscarParadero" type="button">Buscar!</button>
+            </span>
+          </div><!-- /input-group -->
+        </div><!-- /.col-lg-6 -->
+        <div class="col-md-3">
+          <button type="button" id="bystep" class="btn btn-info  pull-right">Paso a Paso</button> 
+        </div>
+        <div class="col-md-4">
+          <button type="button" id="allroad" class="btn btn-primary pull-right">Trayectoria Completa</button> 
+        </div>
+      </div>
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row">
+      <div class="col-md-6">
+        <div style="width:700px; height:550px" id="map"></div>
+      </div>
+      <div class="col-md-6">
+        <table id="myTable" class="table table-striped"> 
+          <thead>
+            <tr> 
+              <th class="text-center">Timestamp</th>
+              <th class="text-center">Tipo día</th>
+              <th class="text-center">N viaje</th>
+              <th class="text-center">N etapa</th>
+              <th class="text-center">Subida</th>
+              <th class="text-center">Bajada</th>
+            </tr>
+          </thead>
+          <tbody>
+          </tbody> 
+        </table>
+      </div>
+    </div>
+    <script src="{% static "js/jquery-1.12.0.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/dict_stops.js" %}"></script>
+    <script src="{% static "dist/leaflet.awesome-markers.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/leafletFunctions.js" %}"></script>
+    <script type='text/javascript'>
+      var   map = initmap();
+      var jobMarkerIcon;
+      var pointList = [];
+      var pointsAdded = 0;
+      var polyline = L.polyline([]).addTo(map);
+      var markerCounter = 0;
+      var sequence = [];
+      var popup = L.popup();
+      // var marker = new L.Marker([-33.447487, -70.673676], {icon: new L.NumberedDivIcon({number: '1'})});
+      // marker.addTo(map);
+      var i =0;
+      
+      var data_from_django = {{ jsdatos|safe  }};
+      sequence = data_from_django['sequence'];
+      var tiempo = data_from_django['tiempo'];
+      var netapa = data_from_django['netapa'];
+      var nviaje = data_from_django['nviaje'];
+      var subida = data_from_django['subida'];
+      var bajada = data_from_django['bajada'];
+      var tipo_dia = data_from_django['tipo_dia']
+      var rowhtml;
+      //L.marker([-33.46, -70.78], {icon: jobMarkerIcon.addTo(map);
+      $('#bystep').on('click', function () {
+				addMarker(sequence, netapa, nviaje, pointsAdded, markerCounter,tiempo);
+        rowhtml = '<tr><td>'+tiempo[pointsAdded]+'</td><td>'+tipo_dia[pointsAdded]+'</td><td>'+'</td><td>'+nviaje[pointsAdded]+'</td><td>'+netapa[pointsAdded]+'</td><td>'+subida[pointsAdded]+'</td><td>'+bajada[pointsAdded]+'</td></tr>';
+        $('#myTable > tbody:last-child').append(rowhtml);
+        pointsAdded+=1;
+        markerCounter+=1;
+      })
+      $('#allroad').on('click', function () {
+        markers_left = sequence.length - markerCounter;
+        var i = 0;
+        while(i<markers_left){
+          $('#bystep').click();
+          i++;
+        }
+      })
+      $('#buscarParadero').on('click', function () {
+          var paradero = $("#paraderoName").val().replace(/\s+$/, '');;
+          var lat_paradero = dict_latlong_stops[paradero]['lat'];
+          var long_paradero = dict_latlong_stops[paradero]['long'];
+          popup.setLatLng([lat_paradero,long_paradero]).setContent(paradero).openOn(map);
+      })
+      
+    </script>
+  </body>
+</html>

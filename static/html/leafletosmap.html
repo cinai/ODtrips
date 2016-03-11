@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Leaflet</title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="jquery-1.12.0.min.js"></script>
+    <script type="text/javascript" src="leaflet/leafletembed.js"></script>
+
+  </head>
+  <body>
+    <div style="width:1000px; height:650px" id="map"></div>
+    <script type="text/javascript" src="leaflet/latlongMetros.js"></script>
+    <script type='text/javascript'>
+      map = initmap();
+      // blue marker
+      var marker = L.marker([-33.447487, -70.673676]).addTo(map);
+      // circle
+      var circle = L.circle([-33.449, -70.679], 500, {
+                    color: 'red',
+                    fillColor: '#f03',
+                    fillOpacity: 0.5
+                  }).addTo(map);
+      // poligono
+      var polygon = L.polygon([
+                      [-33.449, -70.679],
+                      [-33.4, -70.68],
+                      [-33.46, -70.78]
+                    ]).addTo(map);
+      // figure's   popups 
+      marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+      circle.bindPopup("I am a circle.");
+      polygon.bindPopup("I am a polygon.");
+      // popup
+      var popup = L.popup()
+                  .setLatLng([-33.48, -70.658])
+                  .setContent("I am a standalone popup.")
+                  .openOn(map);
+      
+      map.on('click', onMapClick);
+      
+    </script>
+  </body>
+</html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Leaflet</title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="dist//leaflet.awesome-markers.css">
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script type="text/javascript" src="leaflet/leafletembed.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" ></script>
+
+  </head>
+  <body>
+    <div style="width:1000px; height:650px" id="map"></div>
+    <script src="jquery-1.12.0.min.js"></script>
+
+    <script type="text/javascript" src="leaflet/latlongMetros.js"></script>
+    <script src="dist/leaflet.awesome-markers.js"></script>
+    <script type='text/javascript'>
+      map = initmap();
+      var pointList = [];
+      var pointsAdded = 0;
+      var polyline = L.polyline([]).addTo(map);
+
+      // var marker = new L.Marker([-33.447487, -70.673676], {icon: new L.NumberedDivIcon({number: '1'})});
+      // marker.addTo(map);
+      var i =0;
+      var jobMarkerIcon = L.AwesomeMarkers.icon({
+                          icon: '',
+                          markerColor: 'darkblue',
+                          prefix: 'fa',
+                          html: 5
+                          });
+      var marker = L.marker([-33.447487, -70.673676], {icon: jobMarkerIcon});
+      marker.addTo(map);
+      //L.marker([-33.46, -70.78], {icon: jobMarkerIcon.addTo(map);
+    </script>
+  </body>
+</html>
