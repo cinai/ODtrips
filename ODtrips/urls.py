@@ -21,6 +21,7 @@ urlpatterns = [
 	url(r'^admin/', include(admin.site.urls)),
 	url(r'^index/', views.index, name='casa'),
 	url(r'^test2/', views.test2, name='test2'),
+	url(r'^visualizador_n/', views.visualizador_normalizado, name='visualizador_n'),
 	url(r'^visualizador/', views.visualizador, name='visualizador'),
 	url(r'^$', views.index, name='index'),
 ]

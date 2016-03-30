@@ -3,7 +3,7 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title>Leaflet</title>
+    <title id="titlee"></title>
     <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
@@ -13,7 +13,7 @@
 
   </head>
   <body>
-    <div class="row"><p></p></div>
+    <div class="row"><div class="col-md-6"><h3 id="title"></h3></div></div>
     <div class="row">
       <div class="col-md-6">
         <div class="col-md-5">
@@ -79,6 +79,8 @@
       var subida = data_from_django['subida'];
       var bajada = data_from_django['bajada'];
       var tipo_dia = data_from_django['tipo_dia']
+      var usuario = data_from_django['usuario']
+      var corte_temporal = data_from_django['corte_temporal']
       var rowhtml;
       //L.marker([-33.46, -70.78], {icon: jobMarkerIcon.addTo(map);
       $('#bystep').on('click', function () {
@@ -102,7 +104,8 @@
           var long_paradero = dict_latlong_stops[paradero]['long'];
           popup.setLatLng([lat_paradero,long_paradero]).setContent(paradero).openOn(map);
       })
-      
+      $("#title").html("Usuario N°"+usuario+", "+corte_temporal);
+      $("#titlee").html("Usuario N°"+usuario+", "+corte_temporal);
     </script>
   </body>
 </html>
