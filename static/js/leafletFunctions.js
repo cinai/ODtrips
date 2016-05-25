@@ -10,13 +10,13 @@ var visited_locations = [];
 var numberOfvisits = [];
 var popupMessages = [];
 
-function initmap() {
+function initmap(map_name) {
 	// set up AJAX request
 	ajaxRequest =  getXmlHttpObject();
 	if (ajaxRequest==null) {
 	  alert ("This browser does not support HTTP Request");
 	}
-	var map = new L.Map('map', {center: new L.LatLng(-33.447487, -70.673676), zoom: 12});
+	map = new L.Map(map_name, {center: new L.LatLng(-33.447487, -70.673676), zoom: 12});
 	//var map = new L.Map('map', {center: new L.LatLng(51.3, 0.7), zoom: 9});
 
 	// create the tile layer with correct attribution
@@ -106,7 +106,7 @@ function addMarkerByStep(sequence,pointsAdded,markerCounter) {
 	bounds=map.getBounds();
 	map.fitBounds(bounds);
 }
-function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fecha){
+function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fecha,metroOrBus){
 	var par_subida = sequence[markerCounter]['subida'];
 	latitud = dict_latlong_stops[par_subida]['lat'];
 	longitud = dict_latlong_stops[par_subida]['long'];
@@ -122,12 +122,28 @@ function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 		numberOfvisits[index_location]+=1;
 	}
 	if(netapa[markerCounter] == 1){
-		markerColor = 'red';
+		if(par_subida.indexOf('-') && metroOrBus){
+			markerColor = 'darkblue';
+		}
+		else if(metroOrBus){
+			markerColor = 'green';
+		}
+		else{
+			markerColor = 'green';
+		}
 		polyline.addLatLng(new L.LatLng(latitud, longitud));
 		popupMessages[index_location] = popupMessages[index_location] + "<br>" + "Origen, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
 	}
 	else{
-		markerColor = 'darkblue';
+		if(par_subida.indexOf('-') && metroOrBus){
+			markerColor = 'darkblue';
+		}
+		else if(metroOrBus){
+			markerColor = 'green';
+		}
+		else{
+			markerColor = 'darkblue';
+		}
 		polyline.addLatLng(new L.LatLng(latitud, longitud));
 		popupMessages[index_location] = popupMessages[index_location] + "<br>"+ "Transbordo, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
 	}
@@ -142,7 +158,7 @@ function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
     markerMessage = popupMessages[index_location];
     marker.bindPopup(markerMessage);
 }
-function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fecha){
+function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fecha,metroOrBus){
 	var par_bajada = sequence[markerCounter]['bajada'];
 	latitud = dict_latlong_stops[par_bajada]['lat'];
 	longitud = dict_latlong_stops[par_bajada]['long'];
@@ -157,13 +173,29 @@ function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 		numberOfvisits[index_location]+=1;
 	}
 	if(netapa[markerCounter]>=netapa[markerCounter+1] || netapa.length-1 == markerCounter){
-		markerColor = 'green';
+		if(par_bajada.indexOf('-') && metroOrBus){
+			markerColor = 'darkblue';
+		}
+		else if(metroOrBus){
+			markerColor = 'green';
+		}
+		else{
+			markerColor = 'red';
+		}
     	polyline.addLatLng(new L.LatLng(latitud, longitud));
     	polyline = L.polyline([]).addTo(map);
 		popupMessages[index_location] = popupMessages[index_location] + "<br>" + "Destino, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
 	}
 	else{
-		markerColor = 'darkblue';
+		if(par_bajada.indexOf('-') && metroOrBus){
+			markerColor = 'darkblue';
+		}
+		else if(metroOrBus){
+			markerColor = 'green';
+		}
+		else{
+			markerColor = 'darkblue';
+		}
     	polyline.addLatLng(new L.LatLng(latitud, longitud));
 		popupMessages[index_location] = popupMessages[index_location] + "<br>" + "Transbordo, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
     }
@@ -179,13 +211,13 @@ function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
     marker.bindPopup(markerMessage);
 }
 
-function addMarker(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas) {
+function addMarker(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas,metroOrBus) {
 	//ver si hay subida y bajada
 	if(!!sequence[markerCounter]['subida']){
-		addMarkerSubida(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas[markerCounter]);
+		addMarkerSubida(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas[markerCounter],metroOrBus);
 	}
 	if(!!sequence[markerCounter]['bajada']){
-		addMarkerBajada(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas[markerCounter]);
+		addMarkerBajada(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas[markerCounter],metroOrBus);
 	}
 	bounds=map.getBounds();
 	map.fitBounds(bounds);
