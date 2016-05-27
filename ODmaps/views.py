@@ -140,7 +140,7 @@ def compare(request):
 	if(sequence_name!='sequence'):
 		sequence_data = sequence_name.split('_')
 		usuario = sequence_data[0]
-		index_usuario = sequence_data[1]
+		#index_usuario = sequence_data[1]
 		#corte_temporal = sequence_data[1]
 		file_name =  sequence_name + '_' + ct1 + '.csv'
 		file_name2 =  sequence_name + '_' + ct2 + '.csv'
