@@ -1,0 +1,71 @@
+{% load staticfiles %}
+
+<!DOCTYPE html>
+<html>
+  <head>
+    <title id="titlee"></title>
+    <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.5.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static "dist/leaflet.awesome-markers.css" %}">
+    <script src="http://cdn.leafletjs.com/leaflet/v0.7.7/leaflet.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" ></script>
+
+  </head>
+  <body>
+    <div class="row"><div class="col-md-6"><h3 id="title"></h3></div><div class="col-md-6"><h3 id="title2"></h3></div></div>
+    <div class="row">
+      <div class="col-md-6">
+        <div class="col-md-3">
+          <button type="button" id="colorr" class="btn btn-info  pull-right">Colorear bus metro</button> 
+        </div>
+      </div>
+    </div>
+    <div class="row"><p></p></div>
+    <div class="row">
+      <div style="width:1000px; height:750px" id="map1"></div>
+    </div>
+    <script src="{% static "js/jquery-1.12.0.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/dict_stops.js" %}"></script>
+    <script src="{% static "dist/leaflet.awesome-markers.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/leafletFunctions.js" %}"></script>
+    <script type='text/javascript'>
+      var   map1 = initmap("map1");
+      var jobMarkerIcon;
+      var pointList = [];
+      var pointsAdded1 = 0;
+      var markerCounter1 = 0;
+      var polyline = L.polyline([]).addTo(map1);
+      var sequence1 = [];
+      //var popup = L.popup();
+      // var marker = new L.Marker([-33.447487, -70.673676], {icon: new L.NumberedDivIcon({number: '1'})});
+      // marker.addTo(map);
+      var i =0;
+      
+      var data_from_django = {{ jsdatos|safe  }};
+      var dict_subidas = data_from_django['dict_par_subidas'];
+      var dict_bajadas = data_from_django['dict_par_bajadas'];
+      var dict_transport_mode = data_from_django['dict_transport_mode']
+      var rowhtml;
+      //agregar tantos circulos como rois hayan en cada corte temporal
+      map._layersMaxZoom=20; 
+      map._layersMinZoom=10; 
+      map = map1;
+      for (stop in dict_subidas){
+        n_subida = dict_subidas[stop];
+        n_bajada = dict_bajadas[stop];
+        tipo_transporte = dict_transport_mode[stop]
+        addCircle(stop,n_subida,n_bajada,tipo_transporte);
+        pointsAdded1+=1;
+        markerCounter1+=1;
+      }
+      //L.marker([-33.46, -70.78], {icon: jobMarkerIcon.addTo(map);
+      $('#colorr').on('click', function () {
+        map = map1;
+      })
+
+      $("#title").html("  Origen Destino");
+      $("#titlee").html("Usuario N°");
+    </script>
+  </body>
+</html>

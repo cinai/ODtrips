@@ -25,5 +25,6 @@ urlpatterns = [
 	url(r'^visualizador/', views.visualizador, name='visualizador'),
 	url(r'^all/', views.all_trips, name='all_trips'),
 	url(r'^compare/', views.compare, name='compare'),
+	url(r'^od/', views.od, name='od'),
 	url(r'^$', views.index, name='index'),
 ]

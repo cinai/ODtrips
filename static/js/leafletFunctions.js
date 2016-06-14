@@ -238,3 +238,80 @@ function addMarker2(sequence,pointsAdded,markerCounter) {
 	bounds=map.getBounds();
 	map.fitBounds(bounds);
 }
+
+
+function addCircle(stop,n_origin,n_destination,tipo_transporte) {
+	latitud = dict_latlong_stops[stop]['lat'];
+	longitud = dict_latlong_stops[stop]['long'];
+	try{
+		var circle_origin = L.circle([latitud,longitud], 5*(n_origin/100)*Math.log(n_destination), {
+				color: 'green',
+				fillColor: '#009933',
+				fillOpacity: 0.5
+				});
+		var circle_destination = L.circle([latitud,longitud], 5*(n_destination/100)*Math.log(n_destination), {
+				color: 'blue',
+				fillColor: '#0000cc',
+				fillOpacity: 0.5
+				});
+
+		if (n_origin>=n_destination){
+			circle_origin.addTo(map);
+			circle_origin.bindPopup("Origen "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");
+			circle_destination.addTo(map);
+			circle_destination.bindPopup("Origen "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");
+
+		}
+		else{
+			circle_destination.addTo(map);
+			circle_destination.bindPopup("Destino "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");	
+			circle_origin.addTo(map);		
+			circle_origin.bindPopup("Origen "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");
+
+		}	
+	}
+	catch(err){
+		console.log(stop)
+	}
+    
+	bounds=map.getBounds();
+	map.fitBounds(bounds);
+}
+
+function addCircleModeOfTransport(stop,n_origin,n_destination) {
+	latitud = dict_latlong_stops[stop]['lat'];
+	longitud = dict_latlong_stops[stop]['long'];
+	try{
+		var circle_origin = L.circle([latitud,longitud], 5*(n_origin/100)*Math.log(n_destination), {
+				color: 'green',
+				fillColor: '#009933',
+				fillOpacity: 0.5
+				});
+		var circle_destination = L.circle([latitud,longitud], 5*(n_destination/100)*Math.log(n_destination), {
+				color: 'blue',
+				fillColor: '#0000cc',
+				fillOpacity: 0.5
+				});
+
+		if (n_origin>=n_destination){
+			circle_origin.addTo(map);
+			circle_origin.bindPopup("Origen "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");
+			circle_destination.addTo(map);
+			circle_destination.bindPopup("Origen "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");
+
+		}
+		else{
+			circle_destination.addTo(map);
+			circle_destination.bindPopup("Destino "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");	
+			circle_origin.addTo(map);		
+			circle_origin.bindPopup("Origen "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");
+
+		}	
+	}
+	catch(err){
+		console.log(stop)
+	}
+    
+	bounds=map.getBounds();
+	map.fitBounds(bounds);
+}
