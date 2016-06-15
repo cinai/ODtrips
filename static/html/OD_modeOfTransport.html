@@ -17,10 +17,7 @@
     <div class="row">
       <div class="col-md-6">
         <div class="col-md-3">
-          <button type="button" id="colorr" class="btn btn-info  pull-right">Colorear bus metro zp</button> 
-        </div>
-        <div class="col-md-3">
-          <button type="button" id="colorOD" class="btn btn-info  pull-right">Colorear OD</button> 
+          <button type="button" id="colorr" class="btn btn-info  pull-right">Colorear bus metro</button> 
         </div>
       </div>
     </div>
@@ -50,72 +47,22 @@
       var dict_bajadas = data_from_django['dict_par_bajadas'];
       var dict_transport_mode = data_from_django['dict_transport_mode']
       var rowhtml;
-      map = map1;
+      //agregar tantos circulos como rois hayan en cada corte temporal
       map._layersMaxZoom=20; 
       map._layersMinZoom=10; 
-      //agregar tantos circulos como rois hayan en cada corte temporal
-
-
+      map = map1;
+      for (stop in dict_subidas){
+        n_subida = dict_subidas[stop];
+        n_bajada = dict_bajadas[stop];
+        tipo_transporte = dict_transport_mode[stop]
+        addCircleModeOfTransport(stop,n_subida,n_bajada,tipo_transporte);
+        pointsAdded1+=1;
+        markerCounter1+=1;
+      }
       //L.marker([-33.46, -70.78], {icon: jobMarkerIcon.addTo(map);
       $('#colorr').on('click', function () {
         map = map1;
-        var layer_metro = L.layerGroup(circles_metro);
-        var layer_bus = L.layerGroup(circles_bus);
-        var layer_zp = L.layerGroup(circles_zp);
-
-        layer_metro.eachLayer(function(layer) {
-            layer.setStyle({fillColor: 'blue'});
-        });
-        layer_bus.eachLayer(function(layer) {
-            layer.setStyle({fillColor: 'green'});
-        });
-        layer_zp.eachLayer(function (layer) {
-            layer.setStyle({fillColor: 'red'});
-        });
       })
-      $('#colorOD').on('click', function () {
-        removeCircles();
-        for (stop in dict_subidas){
-          n_subida = dict_subidas[stop];
-          tipo_transporte = dict_transport_mode[stop];
-          if (stop in dict_bajadas){
-            n_bajada = dict_bajadas[stop];
-          }
-          else{
-            n_bajada = 0;
-          }
-          addCircle(stop,n_subida,n_bajada,tipo_transporte);
-          pointsAdded1+=1;
-          markerCounter1+=1;
-        }
-        for (stop in dict_bajadas){
-          if (!stop in dict_subidas){
-            tipo_transporte = dict_transport_mode[stop];
-            n_bajada = dict_bajadas[stop];
-            addCircle(stop,0,n_bajada,tipo_transporte);
-            pointsAdded1+=1;
-            markerCounter1+=1;   
-          }
-        }
-        //addCircles();
-        var layer_origin = L.layerGroup(circles_origin);
-        var layer_destination = L.layerGroup(circles_destination);
-        try{
-          map.addLayer(layer_origin);
-          map.addLayer(layer_destination);
-        }
-        catch(err){
-          console.log(";c")
-        }
-        var baseMaps = {
-        };
-        var overlayMaps = {
-            "origin": layer_origin,
-            "destination": layer_destination
-        };
-
-        L.control.layers(baseMaps, overlayMaps).addTo(map);
-      });
 
       $("#title").html("  Origen Destino");
       $("#titlee").html("Usuario N°");
