@@ -10,6 +10,7 @@ import os
 import pickle 
 from os import listdir
 from os.path import isfile, join
+from ODmaps.processingtools import queri
 
 def index(request):
 	return render(request,'test2.html',)
@@ -140,7 +141,7 @@ def compare(request):
 	if(sequence_name!='sequence'):
 		sequence_data = sequence_name.split('_')
 		usuario = sequence_data[0]
-		index_usuario = sequence_data[1]
+		#index_usuario = sequence_data[1]
 		#corte_temporal = sequence_data[1]
 		file_name =  sequence_name + '_' + ct1 + '.csv'
 		file_name2 =  sequence_name + '_' + ct2 + '.csv'
@@ -163,13 +164,8 @@ def compare(request):
 				dict_paradas = {'subida':subida[counter],'bajada': bajada[counter]}
 				sequence.append(dict_paradas)
 				counter += 1
+		abril_rois, septiembre_rois = queri.get_rois(int(usuario))
 
-		'''
-		with open('') as f:
-			abril_rois = pickle.load(f)
-		with open('') as f:
-			septiembre_rois = pickle.load(f)
-		'''	
 		with open(file_path2) as csvfile:	
 			reader = csv.DictReader(csvfile)
 			for row in reader:
@@ -201,8 +197,8 @@ def compare(request):
 		"sequence2": sequence2,
 		"tipo_dia2": tipo_dia2,
 		"corte_temporal2": ct2,
-		"abril_rois": [],
-		"septiembre_rois":[]
+		"abril_rois": abril_rois,
+		"septiembre_rois":septiembre_rois
 	}
 	js_data = json.dumps(to_json)
 	return render(request,'compare.html',{"jsdatos":js_data})

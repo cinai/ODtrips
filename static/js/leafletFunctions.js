@@ -238,3 +238,18 @@ function addMarker2(sequence,pointsAdded,markerCounter) {
 	bounds=map.getBounds();
 	map.fitBounds(bounds);
 }
+
+function addCircleRois(map,rois){
+	for (i=0;i<rois.length;i++) {
+		latitud = rois[i]['lat'];
+		longitud = rois[i]['long'];
+		//agregar tantos circulos como rois hayan en cada corte temporal
+		var circle = L.circle([latitud,longitud], 500, {
+		                color: 'red',
+		                fillColor: '#f03',
+		                fillOpacity: 0.5
+		            }).addTo(map);
+		//es necesario agregar el circulo a alguna parte???
+	}
+	
+}

@@ -71,6 +71,7 @@
       var tipo_dia1 = data_from_django['tipo_dia']
       var usuario = data_from_django['usuario']
       var corte_temporal1 = data_from_django['corte_temporal']
+      var rois_1 = data_from_django['abril_rois']
       sequence2 = data_from_django['sequence2'];
       var tiempo2 = data_from_django['tiempo2'];
       var netapa2 = data_from_django['netapa2'];
@@ -79,23 +80,17 @@
       var bajada2 = data_from_django['bajada2'];
       var tipo_dia2 = data_from_django['tipo_dia2']
       var corte_temporal2 = data_from_django['corte_temporal2']
+      var rois_2 = data_from_django['septiembre_rois']
       var rowhtml;
       latitud1 = dict_latlong_stops[sequence1[0]['subida']]['lat'];
       longitud1 = dict_latlong_stops[sequence1[0]['subida']]['long'];
       latitud2 = dict_latlong_stops[sequence2[0]['subida']]['lat'];
       longitud2 = dict_latlong_stops[sequence2[0]['subida']]['long'];
-      //agregar tantos circulos como rois hayan en cada corte temporal
-      var circle = L.circle([latitud2,longitud2], 500, {
-                        color: 'red',
-                        fillColor: '#f03',
-                        fillOpacity: 0.5
-                    }).addTo(map2);
-      var circle2 = L.circle([latitud1, longitud1], 500, {
-                        color: 'red',
-                        fillColor: '#f03',
-                        fillOpacity: 0.5
-                    }).addTo(map1);
-      colorMetroBus = true;
+
+      addCircleRois(map1,rois_1)
+      addCircleRois(map2,rois_2)
+      
+      colorMetroBus = false;
       //L.marker([-33.46, -70.78], {icon: jobMarkerIcon.addTo(map);
       $('#bystep1').on('click', function () {
         map = map1
