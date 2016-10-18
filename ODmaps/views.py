@@ -18,6 +18,65 @@ def index(request):
 def test2(request):
 	return render_to_response('test2.html',)
 
+def od_mt(request):
+	file_name = ''
+	if request.method == 'GET':
+		file_name = request.GET.get('file','')
+	origin_path = os.path.join(settings.BASE_DIR,'static','datos',file_name+'_origin.csv')
+	destination_path = os.path.join(settings.BASE_DIR,'static','datos',file_name+'_destination.csv')
+	dict_par_subidas = {}
+	dict_par_bajadas = {}
+	dict_transport_mode = {}
+	print("origen "+origin_path)	
+	with open(origin_path) as csvfile:	
+		reader = csv.DictReader(csvfile)
+		for row in reader:
+			dict_par_subidas[row['par_subida']] = row['tiempo_subida']
+			dict_transport_mode[row['par_subida']] = row['tipo_transporte'] 
+	with open(destination_path) as csvfile:
+		reader = csv.DictReader(csvfile)
+		for row in reader:
+			dict_par_bajadas[row['par_bajada']] = row['tiempo_subida']
+			dict_transport_mode[row['par_bajada']] = row['tipo_transporte'] 
+
+	to_json = {
+		"dict_par_subidas": dict_par_subidas,
+		"dict_par_bajadas": dict_par_bajadas,
+		"dict_transport_mode": dict_transport_mode	
+	}
+	js_data = json.dumps(to_json)
+	return render(request,'OD_modeOfTransport.html',{"jsdatos":js_data})
+
+def od(request):
+	file_name = ''
+	if request.method == 'GET':
+		file_name = request.GET.get('file','')
+	origin_path = os.path.join(settings.BASE_DIR,'static','datos',file_name+'_origin.csv')
+	destination_path = os.path.join(settings.BASE_DIR,'static','datos',file_name+'_destination.csv')
+	dict_par_subidas = {}
+	dict_par_bajadas = {}
+	dict_transport_mode = {}
+	print("origen "+origin_path)	
+	with open(origin_path) as csvfile:	
+		reader = csv.DictReader(csvfile)
+		for row in reader:
+			dict_par_subidas[row['par_subida']] = row['tiempo_subida']
+			dict_transport_mode[row['par_subida']] = row['tipo_transporte'] 
+
+	with open(destination_path) as csvfile:
+		reader = csv.DictReader(csvfile)
+		for row in reader:
+			dict_par_bajadas[row['par_bajada']] = row['tiempo_subida']
+			dict_transport_mode[row['par_bajada']] = row['tipo_transporte'] 
+
+	to_json = {
+		"dict_par_subidas": dict_par_subidas,
+		"dict_par_bajadas": dict_par_bajadas,
+		"dict_transport_mode": dict_transport_mode	
+	}
+	js_data = json.dumps(to_json)
+	return render(request,'OD.html',{"jsdatos":js_data})
+
 def visualizador(request):
 	sequence_name = 'sequence'
 	usuario = "?"

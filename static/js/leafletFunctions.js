@@ -10,13 +10,19 @@ var visited_locations = [];
 var numberOfvisits = [];
 var popupMessages = [];
 
+var circles_origin = [];
+var circles_destination = [];
+var circles_metro = [];
+var circles_zp = [];
+var circles_bus = [];
+
 function initmap(map_name) {
 	// set up AJAX request
 	ajaxRequest =  getXmlHttpObject();
 	if (ajaxRequest==null) {
 	  alert ("This browser does not support HTTP Request");
 	}
-	map = new L.Map(map_name, {center: new L.LatLng(-33.447487, -70.673676), zoom: 12});
+	map = new L.Map(map_name, {center: new L.LatLng(-33.447487, -70.673676), zoom: 11});
 	//var map = new L.Map('map', {center: new L.LatLng(51.3, 0.7), zoom: 9});
 
 	// create the tile layer with correct attribution
@@ -249,7 +255,128 @@ function addCircleRois(map,rois){
 		                fillColor: '#f03',
 		                fillOpacity: 0.5
 		            }).addTo(map);
-		//es necesario agregar el circulo a alguna parte???
+		//es necesario agregar el circulo a algun arreglo de circles???
 	}
 	
+function addCircles() {
+	for (circle in circles_destination){
+		circle.addTo(map);
+	}
+	for (circle in circles_origin) {
+		circle.addTo(map);
+	}
+	
+}
+
+function removeCircles() {
+	for (circle in circles_destination){
+		map.removeLayer(circle);
+	}
+	for (circle in circles_origin) {
+		map.removeLayer(circle);
+	}
+}
+
+function addCircle(stop,n_origin,n_destination,mode) {
+	latitud = dict_latlong_stops[stop]['lat'];
+	longitud = dict_latlong_stops[stop]['long'];
+	if (longitud==NaN){
+		console.log(stop+" ESTAAAAAAAAA");
+	}
+	try{
+		if (n_origin > 0){
+			var circle_origin = L.circle([latitud,longitud], 5*(n_origin/100)*Math.log(n_origin), {
+				color: 'green',
+				fillColor: '#009933',
+				fillOpacity: 0.5
+				});
+			circle_origin.bindPopup("Origen "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");
+			circles_origin.push(circle_origin);
+			if (mode == 'METRO'){
+				circles_metro.push(circle_origin);
+			}
+			else if (mode=='BUS'){
+				circles_bus.push(circle_origin);
+			}else{
+				circles_zp.push(circle_origin);
+			}
+		}
+		if (n_destination > 0){
+			var circle_destination = L.circle([latitud,longitud], 5*(n_destination/100)*Math.log(n_destination), {
+				color: 'blue',
+				fillColor: '#0000cc',
+				fillOpacity: 0.5
+				});	
+			circle_destination.bindPopup("Destino "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");	
+			circles_destination.push(circle_destination);
+			if (mode == 'METRO'){
+				circles_metro.push(circles_destination);
+			}
+			else if (mode=='BUS'){
+				circles_bus.push(circles_destination);
+			}else{
+				circles_zp.push(circles_destination);
+			}	
+		}
+		
+	}
+	catch(err){
+		console.log(stop);
+	}
+    
+	//bounds=map.getBounds();
+	//map.fitBounds(bounds);
+}
+
+function addCircleModeOfTransport(stop,n_origin,n_destination,transport) {
+	latitud = dict_latlong_stops[stop]['lat'];
+	longitud = dict_latlong_stops[stop]['long'];
+	try{
+		if (transport == 'METRO'){
+			color = 'blue';
+			fillColor = '#0000cc';
+			small_color = '#6666FF'
+			fillSmallColor = '#B2B2FF'
+		}
+		else if(transport == 'BUS'){
+			color = 'yellow';
+			fillColor = '#FFFF66'
+			small_color = '#B2B247'
+			fillSmallColor = '#FFFFC1'
+		}else{
+			color = 'green';
+			fillColor = '#009933';
+			small_color = '#329932'
+			fillSmallColor = '#98CC98'
+		}
+		if (n_destination <= n_origin){
+			big_circle_n = n_origin;
+			small_circle_n = n_destination;
+		}
+		else {
+			big_circle_n = n_destination;
+			small_circle_n = n_origin;
+		}
+		var big_circle = L.circle([latitud,longitud], 5*(big_circle_n/100)*Math.log(big_circle_n), {
+				color: color,
+				fillColor: fillColor,
+				fillOpacity: 0.5
+				});
+		var small_circle = L.circle([latitud,longitud], 5*(small_circle_n/100)*Math.log(small_circle_n), {
+				color: color,
+				fillColor: fillColor,
+				fillOpacity: 0.5
+				});
+
+		big_circle.addTo(map);
+		big_circle.bindPopup("Origen "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");
+		small_circle.addTo(map);
+		small_circle.bindPopup("Origen "+stop+", "+n_origin+" subidas, "+n_destination+" bajadas");
+		}
+	catch(err){
+		console.log(stop)
+	}
+    
+	bounds=map.getBounds();
+	map.fitBounds(bounds);
 }
