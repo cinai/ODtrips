@@ -6,9 +6,17 @@ var plotlayers=[];
 var bounds;
 var longitud;
 var latitud;
-var visited_locations = [];
-var numberOfvisits = [];
-var popupMessages = [];
+// first map arrays
+var visited_locations_1 = [];
+var numberOfvisits_1 = [];
+var popupMessages_1 = [];
+// second map arrays
+var visited_locations_2 = [];
+var numberOfvisits_2 = [];
+var popupMessages_2 = [];
+
+var mapa_1 = {visited_locations: visited_locations_1, numberOfvisits: numberOfvisits_1,popupMessages:popupMessages_1};
+var mapa_2 = {visited_locations: visited_locations_2, numberOfvisits: numberOfvisits_2,popupMessages:popupMessages_2};
 
 var circles_origin = [];
 var circles_destination = [];
@@ -112,20 +120,20 @@ function addMarkerByStep(sequence,pointsAdded,markerCounter) {
 	bounds=map.getBounds();
 	map.fitBounds(bounds);
 }
-function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fecha,metroOrBus){
+function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fecha,metroOrBus,map_obj){
 	var par_subida = sequence[markerCounter]['subida'];
 	latitud = dict_latlong_stops[par_subida]['lat'];
 	longitud = dict_latlong_stops[par_subida]['long'];
 	var markerMessage = "";
-	var index_location = visited_locations.indexOf(par_subida);
+	var index_location = map_obj.visited_locations.indexOf(par_subida);
 	if(index_location<0){
-		visited_locations.push(par_subida);
-		index_location = visited_locations.length-1;
-		numberOfvisits.push(1);
-		popupMessages.push("<b>"+par_subida+"<b/>");
+		map_obj.visited_locations.push(par_subida);
+		index_location = map_obj.visited_locations.length-1;
+		map_obj.numberOfvisits.push(1);
+		map_obj.popupMessages.push("<b>"+par_subida+"<b/>");
 	}
 	else{
-		numberOfvisits[index_location]+=1;
+		map_obj.numberOfvisits[index_location]+=1;
 	}
 	if(netapa[markerCounter] == 1){
 		if(par_subida.indexOf('-') && metroOrBus){
@@ -138,7 +146,7 @@ function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 			markerColor = 'green';
 		}
 		polyline.addLatLng(new L.LatLng(latitud, longitud));
-		popupMessages[index_location] = popupMessages[index_location] + "<br>" + "Origen, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
+		map_obj.popupMessages[index_location] = map_obj.popupMessages[index_location] + "<br>" + "Origen, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
 	}
 	else{
 		if(par_subida.indexOf('-') && metroOrBus){
@@ -151,32 +159,32 @@ function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 			markerColor = 'darkblue';
 		}
 		polyline.addLatLng(new L.LatLng(latitud, longitud));
-		popupMessages[index_location] = popupMessages[index_location] + "<br>"+ "Transbordo, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
+		map_obj.popupMessages[index_location] = map_obj.popupMessages[index_location] + "<br>"+ "Transbordo, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
 	}
 	jobMarkerIcon = L.AwesomeMarkers.icon({
                           icon: '',
                           markerColor: markerColor,
                           prefix: 'fa',
-                          html:numberOfvisits[index_location]
+                          html:map_obj.numberOfvisits[index_location]
                           });
 	marker = L.marker([latitud,longitud], {icon: jobMarkerIcon});
     marker.addTo(map);
-    markerMessage = popupMessages[index_location];
+    markerMessage = map_obj.popupMessages[index_location];
     marker.bindPopup(markerMessage);
 }
-function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fecha,metroOrBus){
+function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fecha,metroOrBus,map_obj){
 	var par_bajada = sequence[markerCounter]['bajada'];
 	latitud = dict_latlong_stops[par_bajada]['lat'];
 	longitud = dict_latlong_stops[par_bajada]['long'];
-	var index_location = visited_locations.indexOf(par_bajada);
+	var index_location = map_obj.visited_locations.indexOf(par_bajada);
 	if(index_location<0){
-		visited_locations.push(par_bajada);
-		index_location = visited_locations.length-1;
-		numberOfvisits.push(1);
-		popupMessages.push("<b>"+par_bajada+"<b/>");
+		map_obj.visited_locations.push(par_bajada);
+		index_location = map_obj.visited_locations.length-1;
+		map_obj.numberOfvisits.push(1);
+		map_obj.popupMessages.push("<b>"+par_bajada+"<b/>");
 	}
 	else{
-		numberOfvisits[index_location]+=1;
+		map_obj.numberOfvisits[index_location]+=1;
 	}
 	if(netapa[markerCounter]>=netapa[markerCounter+1] || netapa.length-1 == markerCounter){
 		if(par_bajada.indexOf('-') && metroOrBus){
@@ -190,7 +198,7 @@ function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 		}
     	polyline.addLatLng(new L.LatLng(latitud, longitud));
     	polyline = L.polyline([]).addTo(map);
-		popupMessages[index_location] = popupMessages[index_location] + "<br>" + "Destino, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
+		map_obj.popupMessages[index_location] = map_obj.popupMessages[index_location] + "<br>" + "Destino, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
 	}
 	else{
 		if(par_bajada.indexOf('-') && metroOrBus){
@@ -203,27 +211,27 @@ function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 			markerColor = 'darkblue';
 		}
     	polyline.addLatLng(new L.LatLng(latitud, longitud));
-		popupMessages[index_location] = popupMessages[index_location] + "<br>" + "Transbordo, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
+		map_obj.popupMessages[index_location] = map_obj.popupMessages[index_location] + "<br>" + "Transbordo, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
     }
 	jobMarkerIcon = L.AwesomeMarkers.icon({
                           icon: '',
                           markerColor: markerColor,
                           prefix: 'fa',
-                          html:numberOfvisits[index_location]
+                          html:map_obj.numberOfvisits[index_location]
                           });
 	marker = L.marker([latitud,longitud], {icon: jobMarkerIcon});
     marker.addTo(map);
-    markerMessage = popupMessages[index_location];
+    markerMessage = map_obj.popupMessages[index_location];
     marker.bindPopup(markerMessage);
 }
 
-function addMarker(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas,metroOrBus) {
+function addMarker(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas,metroOrBus,map_obj) {
 	//ver si hay subida y bajada
 	if(!!sequence[markerCounter]['subida']){
-		addMarkerSubida(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas[markerCounter],metroOrBus);
+		addMarkerSubida(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas[markerCounter],metroOrBus,map_obj);
 	}
 	if(!!sequence[markerCounter]['bajada']){
-		addMarkerBajada(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas[markerCounter],metroOrBus);
+		addMarkerBajada(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas[markerCounter],metroOrBus,map_obj);
 	}
 	bounds=map.getBounds();
 	map.fitBounds(bounds);
@@ -257,6 +265,7 @@ function addCircleRois(map,rois){
 		            }).addTo(map);
 		//es necesario agregar el circulo a algun arreglo de circles???
 	}
+}
 	
 function addCircles() {
 	for (circle in circles_destination){

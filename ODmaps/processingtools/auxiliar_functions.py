@@ -5,6 +5,7 @@ import pandas as pd
 from geopy.distance import vincenty
 from ODmaps.processingtools.dict_stops import *
 import os
+import io
 
 if os.name == 'nt':
     path_subway_dictionary = 'C:\\Users\\catalina\\Documents\\Datois\\Diccionario-EstacionesMetro.csv'
@@ -19,7 +20,8 @@ features_dict = dict(zip(features_names,range(0,len(features_names))))
 # en un diccionario
 def load_metro_dictionary():
     dict_metro = {}
-    with open(path_subway_dictionary,mode='r') as infile:
+
+    with io.open(path_subway_dictionary, encoding='latin-1') as infile:
         reader = csv.reader(infile,delimiter=';')
         dict_metro = {rows[5]:rows[7] for rows in reader}
     return dict_metro
