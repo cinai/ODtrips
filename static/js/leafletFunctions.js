@@ -22,7 +22,7 @@ function initmap(map_name) {
 	if (ajaxRequest==null) {
 	  alert ("This browser does not support HTTP Request");
 	}
-	map = new L.Map(map_name, {center: new L.LatLng(-33.447487, -70.673676), zoom: 12});
+	map = new L.Map(map_name, {center: new L.LatLng(-33.447487, -70.673676), zoom: 11});
 	//var map = new L.Map('map', {center: new L.LatLng(51.3, 0.7), zoom: 9});
 
 	// create the tile layer with correct attribution
