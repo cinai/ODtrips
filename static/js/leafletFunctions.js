@@ -1,3 +1,20 @@
+// maps
+var   map2 = initmap("map2");		
+var   map1 = initmap("map1");
+// first map variables
+var visited_locations_1 = [];
+var numberOfvisits_1 = [];
+var popupMessages_1 = [];
+var polyline_1 = L.polyline([]).addTo(map1);
+// second map variables
+var visited_locations_2 = [];
+var numberOfvisits_2 = [];
+var popupMessages_2 = [];
+var polyline_2 = L.polyline([]).addTo(map2);
+// objects with variables
+var mapa_1 = {visited_locations: visited_locations_1, numberOfvisits: numberOfvisits_1,popupMessages:popupMessages_1,polyline:polyline_1};
+var mapa_2 = {visited_locations: visited_locations_2, numberOfvisits: numberOfvisits_2,popupMessages:popupMessages_2,polyline:polyline_2};
+// other variables
 var map;
 var ajaxRequest;
 var plotlist;
@@ -6,17 +23,6 @@ var plotlayers=[];
 var bounds;
 var longitud;
 var latitud;
-// first map arrays
-var visited_locations_1 = [];
-var numberOfvisits_1 = [];
-var popupMessages_1 = [];
-// second map arrays
-var visited_locations_2 = [];
-var numberOfvisits_2 = [];
-var popupMessages_2 = [];
-
-var mapa_1 = {visited_locations: visited_locations_1, numberOfvisits: numberOfvisits_1,popupMessages:popupMessages_1};
-var mapa_2 = {visited_locations: visited_locations_2, numberOfvisits: numberOfvisits_2,popupMessages:popupMessages_2};
 
 var circles_origin = [];
 var circles_destination = [];
@@ -122,8 +128,14 @@ function addMarkerByStep(sequence,pointsAdded,markerCounter) {
 }
 function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fecha,metroOrBus,map_obj){
 	var par_subida = sequence[markerCounter]['subida'];
-	latitud = dict_latlong_stops[par_subida]['lat'];
-	longitud = dict_latlong_stops[par_subida]['long'];
+	try{
+		latitud = dict_latlong_stops[par_subida]['lat'];
+		longitud = dict_latlong_stops[par_subida]['long'];
+	}
+	catch(err){
+		console.log("Viaje "+nviaje[markerCounter]+" Etapa "+netapa[markerCounter]+" Paradero "+par_subida+ " no tiene latitud o longitud");
+		return;
+	}
 	var markerMessage = "";
 	var index_location = map_obj.visited_locations.indexOf(par_subida);
 	if(index_location<0){
@@ -145,7 +157,7 @@ function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 		else{
 			markerColor = 'green';
 		}
-		polyline.addLatLng(new L.LatLng(latitud, longitud));
+		map_obj.polyline.addLatLng(new L.LatLng(latitud, longitud));
 		map_obj.popupMessages[index_location] = map_obj.popupMessages[index_location] + "<br>" + "Origen, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
 	}
 	else{
@@ -158,7 +170,7 @@ function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 		else{
 			markerColor = 'darkblue';
 		}
-		polyline.addLatLng(new L.LatLng(latitud, longitud));
+		map_obj.polyline.addLatLng(new L.LatLng(latitud, longitud));
 		map_obj.popupMessages[index_location] = map_obj.popupMessages[index_location] + "<br>"+ "Transbordo, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
 	}
 	jobMarkerIcon = L.AwesomeMarkers.icon({
@@ -174,8 +186,14 @@ function addMarkerSubida(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 }
 function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fecha,metroOrBus,map_obj){
 	var par_bajada = sequence[markerCounter]['bajada'];
-	latitud = dict_latlong_stops[par_bajada]['lat'];
-	longitud = dict_latlong_stops[par_bajada]['long'];
+	try {
+		latitud = dict_latlong_stops[par_bajada]['lat'];
+		longitud = dict_latlong_stops[par_bajada]['long'];
+	}
+	catch(err){
+		console.log("Viaje "+nviaje[markerCounter]+" Etapa "+netapa[markerCounter]+" Paradero "+par_bajada+ " no tiene latitud o longitud");
+		return;
+	}
 	var index_location = map_obj.visited_locations.indexOf(par_bajada);
 	if(index_location<0){
 		map_obj.visited_locations.push(par_bajada);
@@ -196,8 +214,8 @@ function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 		else{
 			markerColor = 'red';
 		}
-    	polyline.addLatLng(new L.LatLng(latitud, longitud));
-    	polyline = L.polyline([]).addTo(map);
+    	map_obj.polyline.addLatLng(new L.LatLng(latitud, longitud));
+    	map_obj.polyline = L.polyline([]).addTo(map);
 		map_obj.popupMessages[index_location] = map_obj.popupMessages[index_location] + "<br>" + "Destino, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
 	}
 	else{
@@ -210,7 +228,7 @@ function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 		else{
 			markerColor = 'darkblue';
 		}
-    	polyline.addLatLng(new L.LatLng(latitud, longitud));
+    	map_obj.polyline.addLatLng(new L.LatLng(latitud, longitud));
 		map_obj.popupMessages[index_location] = map_obj.popupMessages[index_location] + "<br>" + "Transbordo, viaje N°" + nviaje[markerCounter] + ", "+ fecha;
     }
 	jobMarkerIcon = L.AwesomeMarkers.icon({
@@ -226,15 +244,20 @@ function addMarkerBajada(sequence,netapa,nviaje, pointsAdded, markerCounter, fec
 }
 
 function addMarker(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas,metroOrBus,map_obj) {
+	n_markers_added = 0;
 	//ver si hay subida y bajada
 	if(!!sequence[markerCounter]['subida']){
 		addMarkerSubida(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas[markerCounter],metroOrBus,map_obj);
+		n_markers_added += 1;
 	}
 	if(!!sequence[markerCounter]['bajada']){
 		addMarkerBajada(sequence, netapa, nviaje, pointsAdded, markerCounter, fechas[markerCounter],metroOrBus,map_obj);
+		n_markers_added += 1;
+
 	}
 	bounds=map.getBounds();
 	map.fitBounds(bounds);
+	return n_markers_added;
 }
 
 function addMarker2(sequence,pointsAdded,markerCounter) {

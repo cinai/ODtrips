@@ -21,7 +21,10 @@ def get_rois(usuario):
 	del datos_abril
 	del datos_septiembre
 	#extraer rois #todo: change parameter
-	abril_rois = tfe.get_ROIs(datos_usuario_abril,0.6,500)
-	septiembre_rois = tfe.get_ROIs(datos_usuario_septiembre,0.6,500)
+	abril_rois = tfe.get_ROIs(datos_usuario_abril,0.7,500)
+	septiembre_rois = tfe.get_ROIs(datos_usuario_septiembre,0.7,500)
+	print("Aqui vienen el porcentaje de rois")
+	print(abril_rois[1])
+	print(septiembre_rois[1])
 
 	return [abril_rois[0],septiembre_rois[0]]

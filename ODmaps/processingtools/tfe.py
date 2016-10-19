@@ -359,7 +359,8 @@ def get_unc_entropy(df_sequence):
 	for pi in pis:
 		la_suma = la_suma + pi*np.log2(pi)
 	return -la_suma
-
+# no considera transbordos para seleccionar los puntos de transacciones
+# de origen y destino
 def get_latlong_points(df_sequence):
 	a = []
 	locations = []
@@ -445,6 +446,9 @@ def get_percentage_different_first_origin(df_sequence):
 		return np.nan
 	return len(the_set)*1.0/len(first_origins)*100
 
+# this method selects the indexs of the locations
+# that their pi_sums sums upto x
+# Maybe it should stop when 2 pi_sums are much bigger than the others pi_sums
 def get_upToX_pi_locations(pi_sums,x):
 	if x == 1:
 		return [range(len(pi_sums)),100]
@@ -462,17 +466,20 @@ def get_upToX_pi_locations(pi_sums,x):
 	
 # ?
 def get_ROIs(df_sequence,x,limit_meters):
+	# encontrar puntos de transacciones origen
 	X,locations,pi_locations = get_latlong_points(df_sequence)
 	if len(locations) == 1:
 		return [[{"lat":X[0,0],"long":X[0,1]}],1.0]
 	elif len(locations) < 1:
 		return None
+	# construir dendrograma
 	Z = linkage(X,'weighted',lambda x,y: vincenty(x,y).meters)
 	clusters = fcluster(Z,limit_meters,criterion='distance')
 	centroids = []
 	nums_by_clusters =[]
 	pi_sums = []
 	the_clusters = []
+	# join pi_sums of locations that are in the same cluster
 	for i in range(len(clusters)):
 		indice = buscar_locacion(the_clusters,clusters[i])
 		if indice < 0:
