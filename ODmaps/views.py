@@ -238,6 +238,9 @@ def compare(request):
 				dict_paradas2 = {'subida':subida2[counter2],'bajada': bajada2[counter2]}
 				sequence2.append(dict_paradas2)
 				counter2 += 1
+	else:
+		abril_rois = []
+		septiembre_rois = []
 	to_json = {
 		"tiempo": tiempo,
 		"nviaje": nviaje,

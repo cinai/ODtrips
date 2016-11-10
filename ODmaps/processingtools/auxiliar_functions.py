@@ -4,16 +4,21 @@ import numpy as np
 import pandas as pd
 from geopy.distance import vincenty
 from ODmaps.processingtools.dict_stops import *
+from django.conf import settings
 import os
 import io
 
+data_path = os.path.join(settings.BASE_DIR,'static','datos')
+path_subway_dictionary = os.path.join(data_path,'System_data','Diccionario-EstacionesMetro.csv')
+path_csv_sequences = os.path.join(data_path,'Users_data','sequences')
+'''
 if os.name == 'nt':
     path_subway_dictionary = 'C:\\Users\\catalina\\Documents\\Datois\\Diccionario-EstacionesMetro.csv'
-    path_csv_sequences = 'C:\\Users\\catalina\\Documents\\sequences\\'
+    path_csv_sequences = 'C:\\Users\\catalina\\Documents\\Users_data\\sequences\\'
 else:
     path_subway_dictionary = '/home/cata/Documentos/Datois/Diccionario-EstacionesMetro.csv'
     path_csv_sequences = '/home/cata/Documentos/sequences/'
-
+'''
 features_names = ["time_first_journey_weekday","time_last_journey_weekday","time_first_journey_weekend","time_last_journey_weekend","kmDistance","kmMaxDist","kmMinDist","rg","unc_entropy","random_entropy","percentage_different_first_origin_weekday","percentage_different_last_origin_weekday","percentage_different_first_origin_weekend","percentage_different_last_origin_weekend","card_type","shortest_activity_length_weekday","longest_activity_length_weekday","shortest_activity_length_weekend","longest_activity_length_weekdend","traveled_days","traveled days before stop","p100_exclusive_bus_days","p100_exclusive_metro_days","P100_bus_trips","mode_n_trips","frequence_regularity","mean_trips_weekdays","mean_trips_weekend","most_frequent_number_of_stages"]
 features_dict = dict(zip(features_names,range(0,len(features_names))))
 # Función que carga las estaciones de metro
